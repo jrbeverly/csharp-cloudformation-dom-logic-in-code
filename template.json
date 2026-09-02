@@ -1,0 +1,58 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "ArtifactsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Sub": "example-cfn-dom-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "BucketNameParameter": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/cfn-dom/artifacts-bucket",
+        "Type": "String",
+        "Value": {
+          "Ref": "ArtifactsBucket"
+        }
+      }
+    },
+    "DeploymentRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "cfn-dom-deployment-role",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudformation.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ArtifactsBucketName": {
+      "Value": {
+        "Ref": "ArtifactsBucket"
+      }
+    },
+    "ParameterName": {
+      "Value": {
+        "Ref": "BucketNameParameter"
+      }
+    },
+    "DeploymentRoleName": {
+      "Value": {
+        "Ref": "DeploymentRole"
+      }
+    }
+  }
+}
